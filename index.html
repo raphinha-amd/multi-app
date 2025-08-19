@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ToDoList</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr"
+      crossorigin="anonymous"
+    />
+    <link rel="icon" type="image/png" href="/asset/logo2.png" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+  <body style="padding-bottom: 60px">
+    <!-- nav top -->
+    <div id="nav-top"></div>
+
+    <!-- content -->
+    <div class="container">
+      <div class="input-group my-5">
+        <div class="input-group">
+          <input
+            type="text"
+            class="form-control"
+            placeholder="Tambah tugas"
+            aria-label="Tambah tugas"
+            aria-describedby="button-addon2"
+            id="input"
+          />
+          <button class="btn btn-outline-secondary" type="button" id="btnAdd">
+            Tambah
+          </button>
+        </div>
+      </div>
+
+      <ul class="list-group list-group-flush" id="listTask"></ul>
+    </div>
+
+    <!-- nav bottom -->
+    <div id="nav-bot"></div>
+
+    <script>
+      const input = document.getElementById("input");
+      const btnAdd = document.getElementById("btnAdd");
+      const listTask = document.getElementById("listTask");
+
+      let todo = JSON.parse(localStorage.getItem("todo")) || [];
+
+      const save = () => {
+        listTask.innerHTML = "";
+        todo.forEach((t, i) => {
+          const li = document.createElement("li");
+          li.className = `list-group-item d-flex justify-content-between align-items-start`;
+          li.innerHTML = `<input type="checkbox" class="form-check-input me-2" ${
+            t.done ? "checked" : ""
+          }>
+        <div class="ms-2 me-auto">
+          <div class="fw-bold ${
+            t.done ? "text-decoration-line-through" : ""
+          }">${t.text}</div>
+          <small class="fw-lighter">${t.date}</small>
+        </div>
+        <button class="btn btn-outline-danger btn-sm">hapus</button>`;
+
+          li.querySelector("input").addEventListener("change", () => {
+            todo[i].done = !todo[i].done;
+            saveTask();
+          });
+
+          li.querySelector("button").addEventListener("click", () => {
+            todo.splice(i, 1);
+            saveTask();
+          });
+          listTask.appendChild(li);
+        });
+      };
+      const saveTask = () => {
+        localStorage.setItem("todo", JSON.stringify(todo));
+        save();
+      };
+
+      btnAdd.addEventListener("click", () => {
+        if (input.value.trim() === "") return;
+        const newTask = {
+          text: input.value,
+          date: new Date().toLocaleDateString("id-ID", {
+            day: "numeric",
+            month: "long",
+            year: "numeric",
+          }),
+          done: false,
+        };
+        todo.unshift(newTask);
+        input.value = "";
+        saveTask();
+      });
+      save();
+    </script>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q"
+      crossorigin="anonymous"
+    ></script>
+    <script>
+      fetch("partials/nav-top.html")
+        .then((r) => r.text())
+        .then((h) => (document.getElementById("nav-top").innerHTML = h));
+      fetch("partials/nav-bot.html")
+        .then((r) => r.text())
+        .then((h) => (document.getElementById("nav-bot").innerHTML = h));
+    </script>
+  </body>
+</html>
+<!-- <li
+          class="list-group-item d-flex justify-content-between align-items-start"
+        >
+          <input
+            class="form-check-input me-1 border-3"
+            type="checkbox"
+            value=""
+            id="firstCheckbox"
+          />
+          <div class="ms-2 me-auto">
+            <div class="fw-bold">Subheading</div>
+            <small class="fw-lighter">19 Agustus 2025</small>
+          </div>
+          <button class="btn btn-outline-danger btn-sm">hapus</button>
+        </li> -->
