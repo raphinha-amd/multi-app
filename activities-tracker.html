@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Activities Tracker</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr"
+      crossorigin="anonymous"
+    />
+    <link rel="icon" type="image/png" href="asset/logo2.png" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+  <body style="padding-bottom: 60px">
+    <!-- nav top -->
+    <div id="nav-top"></div>
+
+    <!-- content -->
+    <div class="container">
+      <!-- Button trigger modal -->
+      <button
+        type="button"
+        class="btn btn-lg my-5 btn-outline-secondary"
+        data-bs-toggle="modal"
+        data-bs-target="#exampleModal"
+      >
+        <i class="fa-solid fa-plus"></i>
+      </button>
+
+      <!-- Modal new activity -->
+      <div
+        class="modal fade"
+        id="exampleModal"
+        tabindex="-1"
+        aria-labelledby="exampleModalLabel"
+        aria-hidden="true"
+        id="staticBackdrop"
+        data-bs-backdrop="static"
+      >
+        <div class="modal-dialog modal-dialog-centered modal-static">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="exampleModalLabel">
+                Add new activity
+              </h1>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+              ></button>
+            </div>
+            <div class="modal-body">
+              <!-- form add activity -->
+              <input
+                type="text"
+                name="inputAct"
+                id="inputAct"
+                class="form-control mb-3"
+                placeholder="new activity"
+              />
+              <div class="form-check form-check-inline">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="actType"
+                  id="dailyOpt"
+                  value="daily"
+                />
+                <label class="form-check-label" for="dailyOpt">daily</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="actType"
+                  id="weeklyOpt"
+                  value="weekly"
+                />
+                <label class="form-check-label" for="weeklyOpt">weekly</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input
+                  class="form-check-input"
+                  type="radio"
+                  name="actType"
+                  id="monthlyOpt"
+                  value="monthly"
+                />
+                <label class="form-check-label" for="monthlyOpt">monthly</label>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-outline-secondary"
+                id="saveActivity"
+              >
+                save
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- list activity -->
+      <ul class="list-group list-group-flush" id="listActivities"></ul>
+    </div>
+
+    <!-- nav bottom -->
+    <div id="nav-bot"></div>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q"
+      crossorigin="anonymous"
+    ></script>
+
+    <script>
+      // store activities to local storage
+      let activities = JSON.parse(localStorage.getItem("activities")) || [];
+
+      // fun save to local
+      const saveActivities = () => {
+        localStorage.setItem("activities", JSON.stringify(activities));
+      };
+
+      // add new act
+      const addActivity = (text, type) => {
+        const newAct = {
+          text: text,
+          type: type,
+          doneDate: [],
+        };
+        activities.unshift(newAct);
+        saveActivities();
+        renderAct(); // refresh UI
+      };
+
+      // toggle done
+      const toggleAct = (i) => {
+        const today = new Date().toISOString().split("T")[0];
+        const act = activities[i];
+
+        if (!act.doneDate.includes(today)) {
+          act.doneDate.push(today);
+        } else {
+          act.doneDate = act.doneDate.filter((d) => d !== today);
+        }
+
+        saveActivities();
+        renderAct(); // refresh UI
+      };
+
+      // delete acts
+      const delActivity = (i) => {
+        activities.splice(i, 1);
+        saveActivities();
+        renderAct(); // refresh UI
+      };
+
+      // add act lists
+      const renderAct = () => {
+        const actList = document.getElementById("listActivities");
+        actList.innerHTML = "";
+
+        activities.forEach((act, i) => {
+          const li = document.createElement("li");
+          li.className = `list-group-item d-flex justify-content-between align-items-start`;
+
+          const today = new Date().toISOString().split("T")[0];
+          const isDoneToday = act.doneDate.includes(today);
+
+          li.innerHTML = `
+      <div class="form-check form-switch">
+        <input class="form-check-input" type="checkbox" role="switch" ${
+          isDoneToday ? "checked" : ""
+        }/>
+      </div>
+      <div class="ms-2 me-auto">
+        <div class="fw-bold ${
+          isDoneToday ? "text-decoration-line-through" : ""
+        }">${act.text}</div>
+        ${act.type}
+        <span class="badge text-bg-primary rounded-pill ms-3">
+          ${act.doneDate.length} activities
+        </span>
+      </div>
+      <button class="btn btn-outline-danger btn-sm">
+        <i class="fa-solid fa-trash-can"></i>
+      </button>
+    `;
+
+          li.querySelector("input").addEventListener("change", () =>
+            toggleAct(i)
+          );
+          li.querySelector("button").addEventListener("click", () =>
+            delActivity(i)
+          );
+
+          actList.appendChild(li);
+        });
+      };
+
+      // event save activity → harus diluar renderAct()
+      document.getElementById("saveActivity").addEventListener("click", () => {
+        const inputAct = document.getElementById("inputAct");
+        const emptyInput = inputAct.value.trim();
+        const actType = document.querySelector(
+          'input[name="actType"]:checked'
+        )?.value;
+
+        if (emptyInput === "" || !actType) {
+          alert("activity input and type should not be empty");
+          return;
+        }
+        addActivity(emptyInput, actType);
+        inputAct.value = "";
+      });
+
+      // pertama kali render
+      renderAct();
+    </script>
+    <script>
+      fetch("partials/nav-top.html")
+        .then((r) => r.text())
+        .then((h) => {
+          document.getElementById("nav-top").innerHTML = h;
+          document.getElementById("title-nav").textContent =
+            "Activities Tracker";
+        });
+
+      fetch("partials/nav-bot.html")
+        .then((r) => r.text())
+        .then((h) => (document.getElementById("nav-bot").innerHTML = h));
+    </script>
+  </body>
+</html>
