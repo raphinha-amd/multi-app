@@ -13,12 +13,12 @@ const save = () => {
       t.done ? "checked" : ""
     }>
         <div class="ms-2 me-auto">
-          <div class="fw-bold ${
+          <div class="fw-bolder ${
             t.done ? "text-decoration-line-through" : ""
           }">${t.text}</div>
           <small class="fw-lighter">${t.date}</small>
         </div>
-        <button class="btn btn-outline-danger btn-sm">hapus</button>`;
+        <button class="btn btn-outline-danger btn-sm"><i class="fa-solid fa-trash-can"></i></button>`;
 
     li.querySelector("input").addEventListener("change", () => {
       todo[i].done = !todo[i].done;

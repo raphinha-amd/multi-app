@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ToDoList</title>
+    <title>Habit Tracker</title>
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
       rel="stylesheet"
@@ -21,30 +21,9 @@
     <div id="nav-top"></div>
 
     <!-- content -->
-    <div class="container">
-      <div class="input-group my-5">
-        <div class="input-group">
-          <input
-            type="text"
-            class="form-control"
-            placeholder="Add Task"
-            aria-label="Add Task"
-            aria-describedby="button-addon2"
-            id="input"
-          />
-          <button class="btn btn-outline-secondary" type="button" id="btnAdd">
-            Add
-          </button>
-        </div>
-      </div>
-
-      <ul class="list-group list-group-flush" id="listTask"></ul>
-    </div>
 
     <!-- nav bottom -->
     <div id="nav-bot"></div>
-
-    <script src="todolist.js"></script>
 
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
@@ -56,8 +35,9 @@
         .then((r) => r.text())
         .then((h) => {
           document.getElementById("nav-top").innerHTML = h;
-          document.getElementById("title-nav").textContent = "ToDoList";
+          document.getElementById("title-nav").textContent = "Habit Tracker";
         });
+
       fetch("partials/nav-bot.html")
         .then((r) => r.text())
         .then((h) => (document.getElementById("nav-bot").innerHTML = h));
