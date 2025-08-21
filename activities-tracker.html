@@ -161,7 +161,7 @@
       const delActivity = (i) => {
         activities.splice(i, 1);
         saveActivities();
-        renderAct(); // refresh UI
+        renderAct(); // biar tampilan langsung update
       };
 
       // add act lists
@@ -213,7 +213,7 @@
         const emptyInput = inputAct.value.trim();
         const actType = document.querySelector(
           'input[name="actType"]:checked'
-        )?.value;
+        ).value;
 
         if (emptyInput === "" || !actType) {
           alert("activity input and type should not be empty");
